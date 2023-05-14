@@ -19,3 +19,6 @@ The DBSCAN model accurately and quickly guessed the number of spheres in each of
 
 As for the accuracy of the generation of spheres, it was determined in another repository, where I created the images and then assessed their random nature and count by merging the images and cby counting manually the spheres after generating them:
 (insert future link here).
+
+Of course, the scope of this script is to actually predict foci numbers in actual biological data. For that reason, the foci generation section of this script becomes not needed. Just insert into the Cells folder separate folders containing separate stacks of your 3D image, and the script will treat them the same way as it did the artificial foci. The script includes a thrsholding step, where pixel valus under 100 ar considered background. For further information on the way imaging data is scanned here, I again urge you to look at my other repository, where I highlight the process of generating and scanning data: 
+insert new link........
