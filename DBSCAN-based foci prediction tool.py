@@ -15,6 +15,8 @@ import time
 from sklearn.model_selection import ParameterGrid
 from sklearn.cluster import DBSCAN
 import random
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 # get the start time
 start = time.time()
@@ -110,20 +112,33 @@ print("Sphere images generated for 70 cells in %d minutes"%(duration))
 
 
 
-
-
 # 2.Determining the number of spheres based only on the x,y and z coordinates using the DBSCAN
-# machine learning model
+# machine learning model. A 3D visual confirmation is possible as well.
 
-# get the start time
-start2 = time.time()
+# show_spheres_for_path -  A function which returns a 3D visualization of a given cell.
+def show_spheres_for_path(results_df, path_label):
+    # Filter the results dataframe for the desired Path label
+    path_results = results_df[results_df['Path'].str.contains(path_label)]
+
+    # Create the subplots figure
+    fig = make_subplots(rows=1, cols=1, specs=[[{'type': 'scatter3d'}]])
+
+    # Add the scatter trace for the spheres
+    fig.add_trace(
+        go.Scatter3d(x=path_results['Mean x'],y=path_results['Mean y'],
+            z=path_results['Mean z'], mode='markers',
+            marker=dict(size=path_results['Number of pixels in each sphere'] / 100)))
+
+    # Show the figure
+    fig.show()
 
 # Setting the input folder for the analysis
 img_path=r"G:\Sphere counting\Cells"
-output_path=r"G:\Sphere counting\outputs"
+output_path=r"G:\Sphere counting\Outputs"
 os.chdir(img_path)
 
-print(img_path)# Inintializing a file for storing the generated  data as it is generated. 
+
+# Inintializing a file for storing the generated  data as it is generated. 
 # This eases the load on the memory.
 
 with open(output_path+'\\data.csv', 'w+', newline='') as f:
@@ -156,21 +171,25 @@ with open(output_path+'\\data.csv', 'w+', newline='') as f:
             for x,y,intensity in zip(x_coords, y_coords, intensities):
                 writer.writerow([folder.split("\\")[-1], x,y,int(img[6:9])+1,intensity])
 
-                
-# Creating a dataframe from the stored file containing the pixel data for each cell to load the data.
-pixel_data=pd.read_csv(output_path+"\data.csv")
-pixel_df=pd.DataFrame(pixel_data)
-data=pixel_df
 
-# Define the features to be used in clustering. These are the pixel coordinates in the 3D space.
+# Creating a dataframe from the stored file containing the pixel data for each cell to load the data.
+pixel_data = pd.read_csv(output_path+"\data.csv")
+pixel_df = pd.DataFrame(pixel_data)
+data = pixel_df
+
+# Define the features to be used in clustering. These are the foci pixel coordinates in the 3D space.
 features = ['x', 'y', 'z']
 
-results=[["Cell","Actual spheres","Predicted spheres"]]
+sphere_results=[["Cell","Actual spheres","Predicted spheres"]] # generating the header for the foci summary
+visualization_results = [] # initiating the detailed data list
+counter=71 # initiating a countdown
+
 # Loop over each path group and perform the grid search to find the best hyperparameters
 for path in set(data['Path']):
-    actual_spheres=path.split(';')[-1]
-    print("This cell was generated to contain %s foci:"% actual_spheres)
-    
+    counter-=1
+    print(counter)
+    actual_spheres = int(path.split(';')[-1])
+
     # Filter the data for the current path group
     path_data = data[data['Path'] == path][features]
 
@@ -179,50 +198,51 @@ for path in set(data['Path']):
 
     # Fit the model to the current path group data
     labels = model.fit_predict(path_data)
-    
+
     # Print the predicted sphere number for the current path group
     predicted_spheres=max(labels)+1
     print(f"Predicted sphere number for path {path}: {max(labels)+1}")
     print("The accuracy of the prediction was:", int(actual_spheres)*100/predicted_spheres)
     print()
-    results.append([path, int(actual_spheres), predicted_spheres])
+    sphere_results.append([path, int(actual_spheres), predicted_spheres])
     
-#Exporting results to Excel format
-results_df=pd.DataFrame(results)
-results_df.to_excel(output_path+"\sphere prediction.xlsx")
+    # Optional, for 3D visualization: Get the values for which each label is given
+    unique_labels, label_counts = np.unique(labels, return_counts=True)
+    label_values = []
+    label_centroids = []
+    for label in unique_labels:
+        label_points = path_data[labels == label]
+        label_values.append(label_points.values)
+        label_centroids.append(np.mean(label_points, axis=0))
 
-# Grenerating a time report
+    # Create a dictionary to store the results for the current path group
+    path_results = {
+        "Path": [path] * len(unique_labels),
+        "Actual sphere number": [actual_spheres] * len(unique_labels),
+        "Predicted sphere number": [len(unique_labels)] * len(unique_labels),
+        "Sphere Id": list(range(1, len(unique_labels) + 1)),
+        "Mean x": [centroid[0] for centroid in label_centroids],
+        "Mean y": [centroid[1] for centroid in label_centroids],
+        "Mean z": [centroid[2] for centroid in label_centroids],
+        "Number of pixels in each sphere": label_counts}
+
+    # Append the path results to the overall results list
+    visualization_results.append(pd.DataFrame(path_results))
+
+# Exporting results to Excel format
+# Generating a summary of foci data
+sphere_results_df=pd.DataFrame(sphere_results) 
+sphere_results_df.to_excel(output_path+"\\foci prediction.xlsx")
+
+# Generating a detailed account of foci coordinates used for 3D visualization and other statistics
+visualization_df = pd.concat(visualization_results, ignore_index=True) 
+visualization_df.to_excel(output_path+"\\foci visualization data.xlsx")
+
+# Generating a time report
 end2 = time.time()
 duration2 =round((end2-start2)/60,2)
 print("Sphere count data generated for %d cells in %d minutes"%(len(set(data['Path'])),duration2))
 
-
-# In[2]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
+# Optional, 3D foci visualization
+show_spheres_for_path(visualization_df,'35;78')
 
