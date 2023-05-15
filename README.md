@@ -20,7 +20,7 @@ Here, in this example with 78 spheres, the user can zoom in and find the coordin
 Importantly, the user must beforehand create a main experimental folder with two subfolders: 
 - Cells, where the user will deposit separate folders contaning the image files for each cell (or generate them using the script provided here), and
 - Outputs, where files with the results will be saved.
-The user will then change the "Spheres counting" provosiry title with the experimental folder name, and the Drive from G to the user chosen drive.
+The user will then change the "Spheres counting" provisory title with the experimental folder name, and the Drive from G to the user chosen drive.
 
 
 Context:
@@ -37,6 +37,6 @@ https://github.com/neomaster117/Foci-generator-v1.0
 
 Another proof of principle is the 3D foci visualization script included in this script itself.
 
-Of course, the scope of this script is to actually predict foci numbers in actual biological data. For that reason, the foci generation section of this script becomes not needed. Just insert into the Cells folder separate folders containing separate stacks of your 3D image, and the script will treat them the same way as it did the artificial foci. The script includes a thrsholding step, where pixel valus under 100 ar considered background. For further information on the way imaging data is scanned here, I again urge you to look at my Medium article, where I highlight the process of generating and scanning data: 
+Of course, the scope of this script is to actually predict foci numbers in actual biological data. For that reason, the foci generation section of this script becomes not needed. Just insert into the Cells folder separate folders containing separate stacks of your 3D image, and the script will treat them the same way as it did the artificial foci. The script includes a thresholding step, where pixel values under 100 ar considered background. For further information on the way imaging data is scanned here, I reccommend you to look at my Medium article, where I highlight the process of generating and scanning data: 
 <br >
 https://medium.com/@SorinTanasa/cellular-foci-detection-tutorial-part-1-image-scanning-in-opencv-cc1691dc01e2
