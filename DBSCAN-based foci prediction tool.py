@@ -133,8 +133,8 @@ def show_spheres_for_path(results_df, path_label):
     fig.show()
 
 # Setting the input folder for the analysis
-img_path=r"G:\Sphere counting\Cells"
-output_path=r"G:\Sphere counting\Outputs"
+img_path=r"G:\Sphere counting\Cells" # Set your drive and Experimental folder name here, in stead of "Sphere counting"
+output_path=r"G:\Sphere counting\Outputs" # also change path here accordingly
 os.chdir(img_path)
 
 
