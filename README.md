@@ -11,7 +11,8 @@ This repository stores a few of those folders, where the names include the seria
 <br >
 <br >
 
-![3D visualization](https://github.com/neomaster117/Foci-counter/assets/47111504/899f805c-1458-4a2c-a755-48ad51b8cd6d)
+![3D visualization](https://github.com/neomaster117/Foci-counter-in-DBSCAN/assets/47111504/9c8feb98-940c-412e-94e8-0cf16ba9c892)
+
 <br >
 
 Here, in this example with 78 spheres, the user can zoom in and find the coordinats of the spheres, as well as their relative size, based on how many pixels each sphere contains (this is a 100x scaled down visualization).
